@@ -1,0 +1,20 @@
+Package: pantomime
+Title: Tools for tidy population genetics
+Version: 0.0.0.9000
+Authors@R: person('Chris', 'Hollenbeck', email =
+ 'chollenbeck07@gmail.com', role = c('cre', 'aut'))
+Description: An R package containing tools for population genetics analysis in R.
+License: MIT
+LazyData: true
+URL: {{ URL }}
+BugReports: {{ BugReports }}
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+Imports: 
+    adegenet,
+    magrittr,
+    tibble,
+    tidyr
+Suggests: 
+    testthat (>= 2.1.0)
