@@ -1,6 +1,6 @@
 Package: pantomime
 Title: Tools for tidy population genetics
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: person('Chris', 'Hollenbeck', email =
  'chollenbeck07@gmail.com', role = c('cre', 'aut'))
 Description: An R package containing tools for tidy population genetics analysis in R.
