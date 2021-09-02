@@ -16,6 +16,8 @@
 #' @examples
 get_locus_stats <- function(x, hwe_test = FALSE, n_boot = 1000) {
 
+  #browser()
+
   # First, check to see that there are populations defined
   if (is.null(adegenet::pop(x))) {
 
@@ -29,7 +31,7 @@ get_locus_stats <- function(x, hwe_test = FALSE, n_boot = 1000) {
   # Make a tibble of minor allele frequency
   maf_tbl <- adegenet::genind2genpop(x, quiet = TRUE)
   maf_tbl <- adegenet::makefreq(maf_tbl, quiet = TRUE)
-  maf_tbl <- as_tibble(maf_tbl, rownames = "pop")
+  maf_tbl <- tibble::as_tibble(maf_tbl, rownames = "pop")
   maf_tbl <- tidyr::pivot_longer(maf_tbl, cols = -c("pop"), names_to = "locus", values_to = "freq")
   maf_tbl <- tidyr::separate(maf_tbl, locus, into = c("locus", "allele"), sep = "\\.")
   maf_tbl <- dplyr::group_by(maf_tbl, pop, locus)
@@ -63,6 +65,12 @@ get_locus_stats <- function(x, hwe_test = FALSE, n_boot = 1000) {
   het_lst <- purrr::map(pop_lst, function(gen) {
 
       hf <- hierfstat::genind2hierfstat(gen)
+
+      # Fix the problem where hierfstat renames the locus when there is only one locus
+      if (ncol(hf) == 2) {
+        colnames(hf)[2] <- locNames(gen)
+      }
+
       stats <- hierfstat::basic.stats(hf)
       stat_tbl <- stats$perloc
       stat_tbl <- dplyr::as_tibble(stat_tbl, rownames = "locus")
