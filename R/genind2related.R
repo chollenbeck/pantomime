@@ -12,7 +12,7 @@
 #' @importFrom tidyselect everything
 #'
 #' @examples
-genind2related <- function(x) {
+  genind2related <- function(x) {
 
   # Convert the genind object to a dataframe
   rel <- dplyr::bind_cols(inds = adegenet::indNames(x), adegenet::genind2df(x, oneColPerAll = TRUE))
