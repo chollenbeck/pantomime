@@ -7,7 +7,6 @@
 #'
 #' @importFrom adegenet genind2df indNames
 #' @importFrom dplyr across bind_cols funs select transmute_all
-#' @importFrom related readgenotypedata
 #' @importFrom rlang .data
 #' @importFrom tidyselect everything
 #'
