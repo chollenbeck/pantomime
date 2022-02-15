@@ -6,9 +6,10 @@
 #' @export
 #'
 #' @importFrom adegenet nInd pop propTyped seppop
-#' @importFrom dplyr bind_rows mutate select
+#' @importFrom dplyr bind_rows filter left_join mutate select
+#' @importFrom hierfstat betas genind2hierfstat
 #' @importFrom purrr map map2
-#' @importFrom tibble tibble
+#' @importFrom tibble rownames_to_column tibble
 #'
 #' @examples
 get_ind_stats <- function(x) {
@@ -32,9 +33,25 @@ get_ind_stats <- function(x) {
   typed_tbl <- dplyr::mutate(typed_tbl, prop_missing = 1 - prop_typed)
   typed_tbl <- dplyr::select(typed_tbl, ind, pop, prop_missing)
 
+  fis_tbl <- pop_lst %>%
+    map(function(i) {
+        fis <- hierfstat::genind2hierfstat(i) %>%
+          as.data.frame() %>%
+          tibble::rownames_to_column(var = "id") %>%
+          dplyr::filter(id != "dumind") %>%
+          dplyr::select(-pop) %>%
+          hierfstat::betas(betaijT = TRUE) %>%
+          .$betaij %>%
+          diag() * 2 - 1
+
+          return(tibble::tibble(ind = names(fis), fis = fis))
+
+    }) %>%
+    dplyr::bind_rows()
+
+  ind_tbl <- dplyr::left_join(typed_tbl, fis_tbl, by = "ind")
 
 
-
-  return(typed_tbl)
+  return(ind_tbl)
 
 }
