@@ -38,6 +38,7 @@ get_ind_stats <- function(x) {
         fis <- hierfstat::genind2hierfstat(i) %>%
           as.data.frame() %>%
           tibble::rownames_to_column(var = "id") %>%
+          #tibble::as.tibble() %>%
           dplyr::filter(id != "dumind") %>%
           dplyr::select(-pop) %>%
           hierfstat::betas(betaijT = TRUE) %>%
