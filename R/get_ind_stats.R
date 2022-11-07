@@ -33,7 +33,7 @@ get_ind_stats <- function(x) {
   typed_tbl <- dplyr::mutate(typed_tbl, prop_missing = 1 - prop_typed)
   typed_tbl <- dplyr::select(typed_tbl, ind, pop, prop_missing)
 
-  fis_tbl <- pop_lst %>%
+  stat_tbl <- pop_lst %>%
     map(function(i) {
         fis <- hierfstat::genind2hierfstat(i) %>%
           as.data.frame() %>%
@@ -44,12 +44,26 @@ get_ind_stats <- function(x) {
           .$betaij %>%
           diag() * 2 - 1
 
-          return(tibble::tibble(ind = names(fis), fis = fis))
+        # Make a data frame of genotypes
+        gt_tbl <- x@tab %>%
+          tibble::as_tibble(rownames = "ind") %>%
+          tidyr::pivot_longer(-ind, names_to = "locus_allele", values_to = "gt") %>%
+          tidyr::extract(locus_allele, c("locus", "allele"), "(.*)\\.(.*)")
+
+        # Make a heterozygosity table
+        het_tbl <- gt_tbl %>%
+          dplyr::mutate(het = dplyr::if_else(gt == 1, 1, 0)) %>%
+          dplyr::group_by(ind) %>%
+          dplyr::summarize(hz = sum(het, na.rm = TRUE) / dplyr::n())
+
+        comb_tbl <- dplyr::left_join(tibble::tibble(ind = names(fis), fis = fis), het_tbl, by = "ind")
+
+        return(comb_tbl)
 
     }) %>%
     dplyr::bind_rows()
 
-  ind_tbl <- dplyr::left_join(typed_tbl, fis_tbl, by = "ind")
+  ind_tbl <- dplyr::left_join(typed_tbl, stat_tbl, by = "ind")
 
 
   return(ind_tbl)
