@@ -1,0 +1,80 @@
+---
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(adegenet)
+
+```
+
+# {pantomime}
+
+Utilities for tidy population genetics in R
+
+## Installation
+
+```{r, eval=FALSE}
+remotes::install_github("chollenbeck/pantomime")
+```
+
+## Example usage
+
+Load an example simulation dataset in genind format
+
+```{r}
+library(pantomime)
+library(related)
+
+data(nancycats) # From adegenet
+
+# Extract allele frequencies from a genind object
+cats1 <- nancycats[pop = 1]
+df <- get_allele_freqs(cats1)
+
+head(df)
+```
+
+Get locus-by-locus statistics:
+
+```{r}
+cat_stats <- get_locus_stats(cats1, hwe_test = TRUE)
+
+cat_stats
+```
+
+
+# Quick PCA
+
+Run a quick PCA of the data
+
+```{r}
+
+pca_tbl <- qpca(cats1)
+
+ggplot(pca_tbl, aes(x = Axis1, y = Axis2, col = pop)) +
+  geom_point()
+
+```
+
+# Relatedness
+
+```{r}
+# Calculate relatedness from a genind object
+rel <- genind2related(cats1)
+coanc <- coancestry(genotype.data = rel$gdata, ritland = 1) # From the 'related' package
+
+# Convert to tibble
+rel_tbl <- coanc$relatedness %>%
+  as_tibble()
+
+head(rel_tbl)
+```
+
+Quickly visualize the distribution of Ritland relatedness coefficients:
+
+```{r}
+ggplot(rel_tbl, aes(x = ritland)) +
+  geom_histogram()
+```
