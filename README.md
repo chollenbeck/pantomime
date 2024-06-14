@@ -1,7 +1,7 @@
 
 # {pantomime}
 
-Utilities for tidy population genetics in R
+Utilities for tidy population genetics analysis in R
 
 ## Installation
 
@@ -9,9 +9,7 @@ Utilities for tidy population genetics in R
 remotes::install_github("chollenbeck/pantomime")
 ```
 
-## Example usage
-
-Load an example simulation dataset in genind format
+## Data exploration
 
 ``` r
 library(pantomime)
@@ -59,16 +57,37 @@ cat_stats
     ##   locus pop   n_alleles prop_missing   maf    ho    he     fis hwe_pval
     ##   <chr> <chr>     <int>        <dbl> <dbl> <dbl> <dbl>   <dbl>    <dbl>
     ## 1 fca23 P01           5          0       0  0.7  0.722  0.0308    0.002
-    ## 2 fca37 P01           3          0       0  0.2  0.367  0.454     0.113
-    ## 3 fca43 P01           5          0       0  0.7  0.783  0.106     0.4  
+    ## 2 fca37 P01           3          0       0  0.2  0.367  0.454     0.101
+    ## 3 fca43 P01           5          0       0  0.7  0.783  0.106     0.409
     ## 4 fca45 P01           3          0       0  0.8  0.672 -0.190     0.728
     ## 5 fca77 P01           6          0       0  0.5  0.8    0.375     0.039
     ## 6 fca78 P01           2          0       0  0.6  0.522 -0.149     1    
-    ## 7 fca8  P01           4          0.2     0  0.75 0.634 -0.183     0.653
-    ## 8 fca90 P01           5          0       0  0.4  0.744  0.463     0.012
-    ## 9 fca96 P01           3          0       0  0.5  0.633  0.210     0.338
+    ## 7 fca8  P01           4          0.2     0  0.75 0.634 -0.183     0.694
+    ## 8 fca90 P01           5          0       0  0.4  0.744  0.463     0.023
+    ## 9 fca96 P01           3          0       0  0.5  0.633  0.210     0.307
 
-# Quick PCA
+Get locus diversity statistics:
+
+``` r
+cat_div <- get_locus_diversity(cats1)
+
+cat_div
+```
+
+    ## # A tibble: 9 × 6
+    ##   locus pop   n_alleles shannon hexp_nei evenness
+    ##   <chr> <chr>     <int>   <dbl>    <dbl>    <dbl>
+    ## 1 fca8  P01           4   1.10     0.642    0.749
+    ## 2 fca23 P01           5   1.33     0.721    0.781
+    ## 3 fca43 P01           5   1.44     0.779    0.883
+    ## 4 fca45 P01           3   1.07     0.679    0.953
+    ## 5 fca77 P01           6   1.51     0.784    0.828
+    ## 6 fca78 P01           2   0.693    0.526    1    
+    ## 7 fca90 P01           5   1.32     0.726    0.813
+    ## 8 fca96 P01           3   0.997    0.626    0.859
+    ## 9 fca37 P01           3   0.639    0.358    0.576
+
+## Quick PCA
 
 Run a quick PCA of the data
 
@@ -84,9 +103,9 @@ ggplot(pca_tbl, aes(x = Axis1, y = Axis2, col = pop)) +
   geom_point()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-# Relatedness
+## Relatedness
 
 ``` r
 # Calculate relatedness from a genind object
@@ -95,7 +114,7 @@ coanc <- coancestry(genotype.data = rel$gdata, ritland = 1) # From the 'related'
 ```
 
     ##    user  system elapsed 
-    ##   0.004   0.004   0.007 
+    ##   0.002   0.004   0.007 
     ## 
     ## Reading output files into data.frames... Done!
 
@@ -127,4 +146,4 @@ ggplot(rel_tbl, aes(x = ritland)) +
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->

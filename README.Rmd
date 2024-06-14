@@ -11,7 +11,7 @@ library(adegenet)
 
 # {pantomime}
 
-Utilities for tidy population genetics in R
+Utilities for tidy population genetics analysis in R
 
 ## Installation
 
@@ -19,9 +19,7 @@ Utilities for tidy population genetics in R
 remotes::install_github("chollenbeck/pantomime")
 ```
 
-## Example usage
-
-Load an example simulation dataset in genind format
+## Data exploration
 
 ```{r}
 library(pantomime)
@@ -44,8 +42,16 @@ cat_stats <- get_locus_stats(cats1, hwe_test = TRUE)
 cat_stats
 ```
 
+Get locus diversity statistics:
 
-# Quick PCA
+```{r}
+cat_div <- get_locus_diversity(cats1)
+
+cat_div
+```
+
+
+## Quick PCA
 
 Run a quick PCA of the data
 
@@ -58,7 +64,7 @@ ggplot(pca_tbl, aes(x = Axis1, y = Axis2, col = pop)) +
 
 ```
 
-# Relatedness
+## Relatedness
 
 ```{r}
 # Calculate relatedness from a genind object
